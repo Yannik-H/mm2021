@@ -2,6 +2,7 @@ import torch.nn as nn
 from mmcv.cnn import ConvModule
 
 from mmdet.models.builder import HEADS
+from mmdet.models.utils import build_linear_layer
 from .bbox_head import BBoxHead
 
 
@@ -9,9 +10,7 @@ from .bbox_head import BBoxHead
 class ConvFCBBoxHead(BBoxHead):
     r"""More general bbox head, with shared conv and fc layers and two optional
     separated branches.
-
     .. code-block:: none
-
                                     /-> cls convs -> cls fcs -> cls
         shared convs -> shared fcs
                                     \-> reg convs -> reg fcs -> reg
@@ -78,11 +77,21 @@ class ConvFCBBoxHead(BBoxHead):
         self.relu = nn.ReLU(inplace=True)
         # reconstruct fc_cls and fc_reg since input channels are changed
         if self.with_cls:
-            self.fc_cls = nn.Linear(self.cls_last_dim, self.num_classes + 1)
+            if self.custom_cls_channels:
+                cls_channels = self.loss_cls.get_cls_channels(self.num_classes)
+            else:
+                cls_channels = self.num_classes + 1
+            self.fc_cls = build_linear_layer(
+                self.cls_predictor_cfg,
+                in_features=self.cls_last_dim,
+                out_features=cls_channels)
         if self.with_reg:
             out_dim_reg = (4 if self.reg_class_agnostic else 4 *
                            self.num_classes)
-            self.fc_reg = nn.Linear(self.reg_last_dim, out_dim_reg)
+            self.fc_reg = build_linear_layer(
+                self.reg_predictor_cfg,
+                in_features=self.reg_last_dim,
+                out_features=out_dim_reg)
 
         if init_cfg is None:
             self.init_cfg += [
@@ -102,7 +111,6 @@ class ConvFCBBoxHead(BBoxHead):
                             in_channels,
                             is_shared=False):
         """Add shared or separable branch.
-
         convs -> avg pool (optional) -> fcs
         """
         last_layer_dim = in_channels

@@ -210,7 +210,9 @@ class SeesawLoss(nn.Module):
         assert reduction_override in (None, 'none', 'mean', 'sum')
         reduction = (
             reduction_override if reduction_override else self.reduction)
+
         assert cls_score.size(-1) == self.num_classes + 2
+
         pos_inds = labels < self.num_classes
         # 0 for pos, 1 for neg
         obj_labels = (labels == self.num_classes).long()

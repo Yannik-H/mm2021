@@ -7,6 +7,7 @@ from torch.nn.modules.utils import _pair
 from mmdet.core import build_bbox_coder, multi_apply, multiclass_nms
 from mmdet.models.builder import HEADS, build_loss
 from mmdet.models.losses import accuracy
+from mmdet.models.utils import build_linear_layer
 
 
 @HEADS.register_module()
@@ -28,6 +29,8 @@ class BBoxHead(BaseModule):
                      target_stds=[0.1, 0.1, 0.2, 0.2]),
                  reg_class_agnostic=False,
                  reg_decoded_bbox=False,
+                 reg_predictor_cfg=dict(type='Linear'),
+                 cls_predictor_cfg=dict(type='Linear'),
                  loss_cls=dict(
                      type='CrossEntropyLoss',
                      use_sigmoid=False,
@@ -46,6 +49,8 @@ class BBoxHead(BaseModule):
         self.num_classes = num_classes
         self.reg_class_agnostic = reg_class_agnostic
         self.reg_decoded_bbox = reg_decoded_bbox
+        self.reg_predictor_cfg = reg_predictor_cfg
+        self.cls_predictor_cfg = cls_predictor_cfg
         self.fp16_enabled = False
 
         self.bbox_coder = build_bbox_coder(bbox_coder)
@@ -59,10 +64,20 @@ class BBoxHead(BaseModule):
             in_channels *= self.roi_feat_area
         if self.with_cls:
             # need to add background class
-            self.fc_cls = nn.Linear(in_channels, num_classes + 1)
+            if self.custom_cls_channels:
+                cls_channels = self.loss_cls.get_cls_channels(self.num_classes)
+            else:
+                cls_channels = num_classes + 1
+            self.fc_cls = build_linear_layer(
+                self.cls_predictor_cfg,
+                in_features=in_channels,
+                out_features=cls_channels)
         if self.with_reg:
             out_dim_reg = 4 if reg_class_agnostic else 4 * num_classes
-            self.fc_reg = nn.Linear(in_channels, out_dim_reg)
+            self.fc_reg = build_linear_layer(
+                self.reg_predictor_cfg,
+                in_features=in_channels,
+                out_features=out_dim_reg)
         self.debug_imgs = None
         if init_cfg is None:
             self.init_cfg = []
@@ -77,6 +92,18 @@ class BBoxHead(BaseModule):
                         type='Normal', std=0.001, override=dict(name='fc_reg'))
                 ]
 
+    @property
+    def custom_cls_channels(self):
+        return getattr(self.loss_cls, 'custom_cls_channels', False)
+
+    @property
+    def custom_activation(self):
+        return getattr(self.loss_cls, 'custom_activation', False)
+
+    @property
+    def custom_accuracy(self):
+        return getattr(self.loss_cls, 'custom_accuracy', False)
+
     @auto_fp16()
     def forward(self, x):
         if self.with_avg_pool:
@@ -90,7 +117,6 @@ class BBoxHead(BaseModule):
                            pos_gt_labels, cfg):
         """Calculate the ground truth for proposals in the single image
         according to the sampling results.
-
         Args:
             pos_bboxes (Tensor): Contains all the positive boxes,
                 has shape (num_pos, 4), the last dimension 4
@@ -104,11 +130,9 @@ class BBoxHead(BaseModule):
             pos_gt_labels (Tensor): Contains all the gt_labels,
                 has shape (num_gt).
             cfg (obj:`ConfigDict`): `train_cfg` of R-CNN.
-
         Returns:
             Tuple[Tensor]: Ground truth for proposals
             in a single image. Containing the following Tensors:
-
                 - labels(Tensor): Gt_labels for all proposals, has
                   shape (num_proposals,).
                 - label_weights(Tensor): Labels_weights for all
@@ -160,11 +184,9 @@ class BBoxHead(BaseModule):
                     concat=True):
         """Calculate the ground truth for all samples in a batch according to
         the sampling_results.
-
         Almost the same as the implementation in bbox_head, we passed
         additional parameters pos_inds_list and neg_inds_list to
         `_get_target_single` function.
-
         Args:
             sampling_results (List[obj:SamplingResults]): Assign results of
                 all images in a batch after sampling.
@@ -176,11 +198,9 @@ class BBoxHead(BaseModule):
             rcnn_train_cfg (obj:ConfigDict): `train_cfg` of RCNN.
             concat (bool): Whether to concatenate the results of all
                 the images in a single batch.
-
         Returns:
             Tuple[Tensor]: Ground truth for proposals in a single image.
             Containing the following list of Tensors:
-
                 - labels (list[Tensor],Tensor): Gt_labels for all
                   proposals in a batch, each tensor in list has
                   shape (num_proposals,) when `concat=False`, otherwise
@@ -233,13 +253,21 @@ class BBoxHead(BaseModule):
         if cls_score is not None:
             avg_factor = max(torch.sum(label_weights > 0).float().item(), 1.)
             if cls_score.numel() > 0:
-                losses['loss_cls'] = self.loss_cls(
+                loss_cls_ = self.loss_cls(
                     cls_score,
                     labels,
                     label_weights,
                     avg_factor=avg_factor,
                     reduction_override=reduction_override)
-                losses['acc'] = accuracy(cls_score, labels)
+                if isinstance(loss_cls_, dict):
+                    losses.update(loss_cls_)
+                else:
+                    losses['loss_cls'] = loss_cls_
+                if self.custom_activation:
+                    acc_ = self.loss_cls.get_accuracy(cls_score, labels)
+                    losses.update(acc_)
+                else:
+                    losses['acc'] = accuracy(cls_score, labels)
         if bbox_pred is not None:
             bg_class_ind = self.num_classes
             # 0~self.num_classes-1 are FG, self.num_classes is BG
@@ -280,11 +308,9 @@ class BBoxHead(BaseModule):
                    rescale=False,
                    cfg=None):
         """Transform network output for a batch into bbox predictions.
-
         If the input rois has batch dimension, the function would be in
         `batch_mode` and return is a tuple[list[Tensor], list[Tensor]],
         otherwise, the return is a tuple[Tensor, Tensor].
-
         Args:
             rois (Tensor): Boxes to be transformed. Has shape (num_boxes, 5)
                or (B, num_boxes, 5)
@@ -305,7 +331,6 @@ class BBoxHead(BaseModule):
             rescale (bool): If True, return boxes in original image space.
                 Default: False.
             cfg (obj:`ConfigDict`): `test_cfg` of Bbox Head. Default: None
-
         Returns:
             tuple[list[Tensor], list[Tensor]] or tuple[Tensor, Tensor]:
                 If the input has a batch dimension, the return value is
@@ -322,8 +347,11 @@ class BBoxHead(BaseModule):
         if isinstance(cls_score, list):
             cls_score = sum(cls_score) / float(len(cls_score))
 
-        scores = F.softmax(
-            cls_score, dim=-1) if cls_score is not None else None
+        if self.custom_cls_channels:
+            scores = self.loss_cls.get_activation(cls_score)
+        else:
+            scores = F.softmax(
+                cls_score, dim=-1) if cls_score is not None else None
 
         batch_mode = True
         if rois.ndim == 2:
@@ -419,7 +447,6 @@ class BBoxHead(BaseModule):
     @force_fp32(apply_to=('bbox_preds', ))
     def refine_bboxes(self, rois, labels, bbox_preds, pos_is_gts, img_metas):
         """Refine bboxes during training.
-
         Args:
             rois (Tensor): Shape (n*bs, 5), where n is image number per GPU,
                 and bs is the sampled RoIs per image. The first column is
@@ -429,10 +456,8 @@ class BBoxHead(BaseModule):
             pos_is_gts (list[Tensor]): Flags indicating if each positive bbox
                 is a gt bbox.
             img_metas (list[dict]): Meta info of each image.
-
         Returns:
             list[Tensor]: Refined bboxes of each image in a mini-batch.
-
         Example:
             >>> # xdoctest: +REQUIRES(module:kwarray)
             >>> import kwarray
@@ -498,13 +523,11 @@ class BBoxHead(BaseModule):
     @force_fp32(apply_to=('bbox_pred', ))
     def regress_by_class(self, rois, label, bbox_pred, img_meta):
         """Regress the bbox for the predicted class. Used in Cascade R-CNN.
-
         Args:
             rois (Tensor): shape (n, 4) or (n, 5)
             label (Tensor): shape (n, )
             bbox_pred (Tensor): shape (n, 4*(#class)) or (n, 4)
             img_meta (dict): Image meta info.
-
         Returns:
             Tensor: Regressed bboxes, the same shape as input rois.
         """

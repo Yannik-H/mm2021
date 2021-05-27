@@ -56,9 +56,11 @@ model = dict(
                     target_means=[0., 0., 0., 0.],
                     target_stds=[0.1, 0.1, 0.2, 0.2]),
                 reg_class_agnostic=True,
+                cls_predictor_cfg=dict(type='NormedLinear', tempearture=20),
                 loss_cls=dict(
                     type='SeesawLoss',
-                    #use_sigmoid=False,
+                    p=0.8,
+                    q=2.0,
                     num_classes=515,
                     loss_weight=1.0),
                 loss_bbox=dict(type='SmoothL1Loss', beta=1.0,
@@ -74,9 +76,11 @@ model = dict(
                     target_means=[0., 0., 0., 0.],
                     target_stds=[0.05, 0.05, 0.1, 0.1]),
                 reg_class_agnostic=True,
+                cls_predictor_cfg=dict(type='NormedLinear', tempearture=20),
                 loss_cls=dict(
                     type='SeesawLoss',
-                    #use_sigmoid=False,
+                    p=0.8,
+                    q=2.0,
                     num_classes=515,
                     loss_weight=1.0),
                 loss_bbox=dict(type='SmoothL1Loss', beta=1.0,
@@ -92,15 +96,22 @@ model = dict(
                     target_means=[0., 0., 0., 0.],
                     target_stds=[0.033, 0.033, 0.067, 0.067]),
                 reg_class_agnostic=True,
+                cls_predictor_cfg=dict(type='NormedLinear', tempearture=20),
                 loss_cls=dict(
                     type='SeesawLoss',
-                    #use_sigmoid=True,
+                    p=0.8,
+                    q=2.0,
                     num_classes=515,
                     loss_weight=1.0),
                 loss_bbox=dict(type='SmoothL1Loss', beta=1.0, loss_weight=1.0))
         ]),
     # model training and testing settings
     train_cfg=dict(
+
+        log_cfg=dict(
+            print_param=True
+        ),
+
         rpn=dict(
             assigner=dict(
                 type='MaxIoUAssigner',
