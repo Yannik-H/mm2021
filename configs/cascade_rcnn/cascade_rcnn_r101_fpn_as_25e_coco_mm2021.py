@@ -192,9 +192,9 @@ train_pipeline = [
     dict(type='LoadAnnotations', with_bbox=True),
     dict(
         type='Resize',
-        img_scale=[(1333, 900), (1333, 750), (1333, 600)],
-        multiscale_mode='value',
-        #img_scale=(1333, 800),
+        #img_scale=[(1333, 900), (1333, 750), (1333, 600)],
+        #multiscale_mode='value',
+        img_scale=(1333, 800),
         keep_ratio=True),
     dict(type='RandomFlip', flip_ratio=0.5),
     dict(type='Normalize', **img_norm_cfg),
@@ -206,8 +206,8 @@ test_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(
         type='MultiScaleFlipAug',
-        img_scale=[(1333, 900), (1333, 750), (1333, 600)],
-        #img_scale=(1333, 800),
+        #img_scale=[(1333, 900), (1333, 750), (1333, 600)],
+        img_scale=(1333, 800),
         flip=False,
         transforms=[
             dict(type='Resize', keep_ratio=True),
@@ -219,8 +219,8 @@ test_pipeline = [
         ])
 ]
 data = dict(
-    samples_per_gpu=2,
-    workers_per_gpu=2,
+    samples_per_gpu=3,
+    workers_per_gpu=3,
     train=dict(
         type=dataset_type,
         ann_file=data_root + 'coco_mm2021/annotations/train.json',
@@ -242,7 +242,7 @@ data = dict(
 evaluation = dict(interval=1, metric='bbox')
 
 # optimizer
-optimizer = dict(type='SGD', lr=2e-2, momentum=0.9, weight_decay=0.001)    # 0.0001 -> 0.001
+optimizer = dict(type='SGD', lr=3e-2, momentum=0.9, weight_decay=0.0001)
 optimizer_config = dict(grad_clip=None)
 # learning policy
 lr_config = dict(
@@ -250,8 +250,8 @@ lr_config = dict(
     warmup='linear',
     warmup_iters=500,
     warmup_ratio=0.001,
-    step=[16, 19, 26, 29])
-runner = dict(type='EpochBasedRunner', max_epochs=30)
+    step=[16, 19, 23])
+runner = dict(type='EpochBasedRunner', max_epochs=25)
 
 
 log_config = dict(
@@ -261,6 +261,6 @@ log_config = dict(
         dict(type='TensorboardLoggerHook')
     ])
 
-work_dir = "/data/mmdet/ACM_MM_2021/cascade_rcnn_r101_fpn_ms_20+12e_coco_mm2021_temp"
+work_dir = "/data/mmdet/ACM_MM_2021/cascade_rcnn_r101_fpn_as_25e_coco_mm2021_temp"
 
-resume_from = "/data/mmdet/ACM_MM_2021/cascade_rcnn_r101_fpn_20e_coco_mm2021/latest.pth"
+#resume_from = "/data/mmdet/ACM_MM_2021/cascade_rcnn_r101_fpn_20e_coco_mm2021/latest.pth"

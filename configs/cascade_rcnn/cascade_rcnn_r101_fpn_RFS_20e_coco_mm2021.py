@@ -1,5 +1,4 @@
-_base_ = './cascade_rcnn_r50_fpn_20e_coco.py'
-#model = dict(pretrained='torchvision://resnet101', backbone=dict(depth=101))
+#_base_ = './cascade_rcnn_r50_fpn_20e_coco.py'
 
 # model settings
 model = dict(
@@ -183,8 +182,6 @@ model = dict(
 
 CLASSES = ('Jansport', 'molsion', 'guess', 'Goodbaby', 'coach', 'meizu', 'cocacola', 'moncler', 'qingyang', 'zippo', 'lego', 'decathlon', 'adidas', 'seiko', 'vrbox', 'moschino', 'palmangels', 'uniqlo', 'bose', 'baishiwul', 'rayban', 'd_wolves', 'laneige', 'hotwind', 'skechers', 'anta', 'kingston', 'wuliangye', 'disney', 'pinkfong', 'lancome', 'Versace', 'FGN', 'fortnite', 'titoni', 'innisfree', 'levis', 'robam', 'dior', 'GUND', 'paulfrank', 'wodemeilirizhi', 'thehistoryofwhoo', 'bejirog', 'mg', 'VANCLEEFARPELS', 'Stussy', 'alexandermcqueen', 'inman', 'nikon', 'dove', 'jiangshuweishi', 'durex', 'thombrowne', 'emerson', 'erdos', 'iwc', 'Anna_sui', 'nanjiren', 'emiliopucci', 'ugg', 'vacheronconstantin', 'gloria', '3M', 'bally', 'asics', 'lamborghini', 'dyson', 'christopher_kane', 'basichouse', 'casio', 'moco', 'acne', 'ysl', 'aptamil', 'BASF', 'okamoto', 'FridaKahlo', 'Specialized', 'bolon', 'jack_wolfskin', 'jeep', 'cartier', 'mlb', 'jimmythebull', 'zhejiangweishi', 'jeanrichard', 'stuartweitzman', 'baleno', 'montblanc', 'guerlain', 'cainiaoguoguo', 'bear', 'monsterenergy', 'Aquabeads', 'marcjacobs', 'ELLE', 'nfl', 'Levis_AE', 'chigo', 'snoopy', 'hla', 'jimmychoo', 'otterbox', 'simon', 'lovemoschino', 'armani', 'playboy', 'sulwhasoo', 'lv', 'dkny', 'vatti', 'lenovo', 'offwhite', 'eddrac', 'semir', 'ihengima', 'panerai', 'sergiorossi', 'mulberry', 'tissot', 'parker', 'loreal', 'columbia', 'Lululemon', 'samsung', 'liquidpalisade', 'Amii', '3concepteyes', 'miffy', 'vancleefarpels', 'lachapelle', 'kobelco', 'PATAGONIA', 'theexpendables', 'lincoln', 'chloe', 'jnby', 'rapha', 'beautyBlender', 'gentlemonster', 'chaumet', 'banbao', 'vans', 'linshimuye', 'shaxuan', 'liangpinpuzi', 'lux', 'stanley', 'philips', 'brioni', 'hp', 'edwin', 'peskoe', 'eral', 'pantene', 'gree', 'nxp', 'bandai', 'shelian', 'HarleyDavidson_AE', 'abercrombiefitch', 'goldlion', 'keds', 'samanthathavasa', 'nintendo', 'be_cheery', 'mujosh', 'anessa', 'snidel', 'erke', 'furla', 'Josiny', 'tomford', 'jaegerlecoultre', 'dissona', 'wodemeiliriji', 'brabus', 'moony', 'gucci', 'miumiu', 'vanguard', 'THINKINGPUTTY', 'LAMY', 'bobdog', 'pigeon', 'celine', 'bulgari', 'shiseido', 'joyong', 'vlone', 'dell', 'deli', 'canon', 'karenwalker', 'musenlin', 'volcom', 'amass', 'SANDVIK', 'dhc', 'mcm', 'GOON', 'bvlgari', 'beats', 'ny', 'ports', 'omron', 'only', 'razer', 'siemens', 'clinique', 'ccdd', 'zara', 'esteelauder', 'OTC', 'blackberry', 'bottegaveneta', 'suzuki', 'yili', 'fsa', 'jackjones', 'wonderflower', 'MaxMara', 'nissan', 'makeupforever', 'hublot', 'belle', 'jissbon', 'monchichi', 'youngor', 'PopSockets', 'hengyuanxiang', 'motorhead', 'mistine', 'jeanswest', 'versace', 'chromehearts', 'HUGGIES', 'Belif', 'aux', 'office', 'ferragamo', 'arsenal', 'yonghui', 'Yamaha', 'converse', 'sk2', 'evisu', 'newbalance', 'thermos', 'camel', 'KielJamesPatrick', 'alibaba', 'rimowa', 'newera', 'anello', 'flyco', 'LG', 'longines', 'dolcegabbana', 'YEARCON', 'mentholatum', 'VW', 'uno', 'peacebird', 'Miss_sixty', 'toryburch', 'cdgplay', 'hisense', 'fjallraven', 'mindbridge', 'katespade', 'nike', 'metersbonwe', 'chaoneng', 'zhoudafu', 'seven7', 'PXG', 'haier', 'headshoulder', 'loewe', 'safeguard', 'CanadaGoose', 'Jmsolution', 'mac', 'hellokitty', 'Thrasher', 'zebra', 'emblem', 'girdear', 'KTM', 'alexanderwang', 'metallica', 'ThinkPad', 'moussy', 'tiantainwuliu', 'leader', 'angrybirds', 'thenorthface', 'kipling', 'dazzle', 'bioderma', 'grumpycat', 'avene', 'longchamp', 'tesla', 'wechat', 'cree', 'chenguang', 'vivo', 'ochirly', 'walmart', 'manchesterunited', 'ecco', 'doraemon', 'toshiba', 'tencent', 'eland', 'juicycouture', 'swarovski', 'VDL', 'supor', 'moutai', 'ironmaiden', 'konka', 'intel', 'burberry', 'septwolves', 'nipponpaint', 'HARRYPOTTER', 'Montblanc', 'fila', 'pepsicola', 'citizen', 'airjordan', 'fresh', 'TOUS', 'balenciaga', 'omega', 'fendi', 'honda', 'xiaomi', 'oakley', 'FESTO', 'ahc', 'CommedesGarcons', 'perfect', 'darlie', 'OralB', 'kappa', 'instantlyageless', 'OPPO', 'royalstar', 'esprit', 'tommyhilfiger', 'olay', 'kanahei', 'Levistag', '361du', 'lee', 'onitsukatiger', 'henkel', 'miui', 'michael_kors', 'Aape', 'leaders', 'libai', 'hunanweishi', 'Auby', 'asus', 'nestle', 'rolex', 'barbie', 'PawPatrol', 'tata', 'chowtaiseng', 'markfairwhale', 'puma', 'Herschel', 'joeone', 'baojianshipin', 'naturerepublic', 'kans', 'prada', 'kiehls', 'piaget', 'toread', 'bosideng', 'castrol', 'apple', 'buick', 'ck', 'mobil', 'lanvin', 'Bosch', 'chanel', 'cpb', 'wanda', 'hermes', 'patekphilippe', 'toray', 'toyota', 'lindafarrow', 'peppapig', 'lacoste', 'gap', 'porsche', 'Mexican', 'christianlouboutin', 'goldsgym', 'heronpreston', 'UnderArmour', 'warrior', 'benz', 'Duke', 'lets_slim', 'huawei', 'volvo', 'rejoice', 'TommyHilfiger', 'versacetag', 'pierrecardin', 'tries', 'sandisk', 'veromoda', 'Y-3', 'yuantong', 'ford', 'beaba', 'lining', 'stdupont', 'hotwheels', 'teenagemutantninjaturtles', 'montagut', 'hollister', 'panasonic', 'hikvision', 'hugoboss', 'ThomasFriends', 'skf', 'MANGO', 'miiow', 'DanielWellington', 'hera', 'tagheuer', 'starbucks', 'KOHLER', 'baishiwuliu', 'gillette', 'beijingweishi', 'diesel', 'pandora', 'sony', 'tumi', 'etam', 'CHAMPION', 'tcl', 'arcteryx', 'aokang', 'kboxing', 'kenzo', 'audi', 'mansurgavriel', 'house_of_hello', 'pampers', 'opple', 'samsonite', 'nanoblock', 'xtep', 'charles_keith', 'CCTV', 'PJmasks', 'threesquirrels', 'Dickies', 'tudor', 'goyard', 'pinarello', 'tiffany', 'lanyueliang', 'daphne', 'nba', 'SUPERME', 'juzui', 'MURATA', 'valentino', 'bmw', 'franckmuller', 'zenith', 'oldnavy', 'sum37', 'holikaholika', 'girardperregaux', 'bull', 'PINKFLOYD', 'zhoushengsheng', 'givenchy', 'baidu', 'nanfu', 'skyworth', 'snp', 'tsingtao', 'MCM', '3t', 'hyundai', 'jiaodan', 'Budweiser', 'triangle', 'satchi', 'lexus', 'balabala', 'teenieweenie', 'midea', 'FivePlus', 'reddragonfly', 'ralphlauren')
 
-dataset_type = 'CocoDataset'
-data_root = 'data/coco/'
 img_norm_cfg = dict(
     mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
 train_pipeline = [
@@ -212,9 +209,15 @@ test_pipeline = [
             dict(type='Collect', keys=['img']),
         ])
 ]
+
+
+# dataset settings
+_base_ = 'coco_instance.py'
+dataset_type = 'LVISV1Dataset'
+data_root = 'data/coco/'
 data = dict(
-    samples_per_gpu=2,
-    workers_per_gpu=2,
+    samples_per_gpu=8,
+    workers_per_gpu=8,
     train=dict(
         type=dataset_type,
         ann_file=data_root + 'coco_mm2021/annotations/train.json',
@@ -229,14 +232,16 @@ data = dict(
         classes=CLASSES),
     test=dict(
         type=dataset_type,
-        ann_file=data_root + 'coco_mm2021/annotations/val.json',
-        img_prefix=data_root + 'coco_mm2021/train_all/',
+        ann_file=data_root + 'coco_mm2021/annotations/test.json',
+        img_prefix=data_root + 'coco_mm2021/test/',
         pipeline=test_pipeline,
         classes=CLASSES))
+
+
 evaluation = dict(interval=1, metric='bbox')
 
 # optimizer
-optimizer = dict(type='SGD', lr=2e-2, momentum=0.9, weight_decay=0.0001)
+optimizer = dict(type='SGD', lr=8e-2, momentum=0.9, weight_decay=0.0001)
 optimizer_config = dict(grad_clip=None)
 # learning policy
 lr_config = dict(
@@ -255,5 +260,5 @@ log_config = dict(
         dict(type='TensorboardLoggerHook')
     ])
 
-work_dir = "/data/mmdet/ACM_MM_2021/cascade_rcnn_r101_fpn_30e_coco_mm2021"
+work_dir = "/data/mmdet/ACM_MM_2021/cascade_rcnn_r101_fpn_RFS_30e_coco_mm2021"
 #resume_from = "/data/mmdet/ACM_MM_2021/cascade_rcnn_r101_fpn_20e_coco_mm2021/latest.pth"
