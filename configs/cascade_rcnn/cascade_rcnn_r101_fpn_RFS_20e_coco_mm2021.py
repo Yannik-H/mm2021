@@ -1,4 +1,4 @@
-#_base_ = './cascade_rcnn_r50_fpn_20e_coco.py'
+_base_ = './cascade_rcnn_r50_fpn_20e_coco.py'
 
 # model settings
 model = dict(
@@ -210,9 +210,8 @@ test_pipeline = [
         ])
 ]
 
-
 # dataset settings
-_base_ = 'coco_instance.py'
+#_base_ = '../_base_/datasets/coco_instance.py'
 dataset_type = 'LVISV1Dataset'
 data_root = 'data/coco/'
 data = dict(

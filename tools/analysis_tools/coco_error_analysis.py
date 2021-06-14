@@ -8,6 +8,8 @@ import numpy as np
 from pycocotools.coco import COCO
 from pycocotools.cocoeval import COCOeval
 
+from tqdm import tqdm
+
 
 def makeplot(rs, ps, outDir, class_name, iou_type):
     cs = np.vstack([
@@ -251,7 +253,7 @@ def analyze_results(res_file,
     cocoGt = COCO(ann_file)
     cocoDt = cocoGt.loadRes(res_file)
     imgIds = cocoGt.getImgIds()
-    for res_type in res_types:
+    for res_type in tqdm(res_types):
         res_out_dir = out_dir + '/' + res_type + '/'
         res_directory = os.path.dirname(res_out_dir)
         if not os.path.exists(res_directory):

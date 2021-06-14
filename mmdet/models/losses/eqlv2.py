@@ -52,6 +52,8 @@ class EQLv2(nn.Module):
                 avg_factor=None,
                 reduction_override=None,
                 **kwargs):
+        import ipdb
+        ipdb.set_trace()
         self.n_i, self.n_c = cls_score.size()
 
         self.gt_classes = label

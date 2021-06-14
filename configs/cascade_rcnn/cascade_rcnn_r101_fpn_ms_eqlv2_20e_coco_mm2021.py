@@ -191,7 +191,7 @@ img_norm_cfg = dict(
 train_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(type='LoadAnnotations', with_bbox=True),
-    dict(type='Resize', img_scale=(1333, 800), keep_ratio=True),
+    dict(type='Resize', img_scale=[(1000, 1000), (1000, 800)], keep_ratio=True),
     dict(type='RandomFlip', flip_ratio=0.5),
     dict(type='Normalize', **img_norm_cfg),
     dict(type='Pad', size_divisor=32),
@@ -202,7 +202,7 @@ test_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(
         type='MultiScaleFlipAug',
-        img_scale=(1333, 800),
+        img_scale=[(1000, 1000), (1000, 950), (1000, 900), (1000, 850), (1000, 800)],
         flip=False,
         transforms=[
             dict(type='Resize', keep_ratio=True),
@@ -230,8 +230,8 @@ data = dict(
         classes=CLASSES),
     test=dict(
         type=dataset_type,
-        ann_file=data_root + 'coco_mm2021/annotations/testB_imgList.json',
-        img_prefix=data_root + 'coco_mm2021/test_B/',
+        ann_file=data_root + 'coco_mm2021/annotations/test.json',
+        img_prefix=data_root + 'coco_mm2021/test/',
         pipeline=test_pipeline,
         classes=CLASSES))
 evaluation = dict(interval=1, metric='bbox')
@@ -245,8 +245,8 @@ lr_config = dict(
     warmup='linear',
     warmup_iters=500,
     warmup_ratio=0.001,
-    step=[16, 19])
-runner = dict(type='EpochBasedRunner', max_epochs=25)
+    step=[16, 19, 28])
+runner = dict(type='EpochBasedRunner', max_epochs=30)
 
 
 log_config = dict(
@@ -256,5 +256,5 @@ log_config = dict(
         dict(type='TensorboardLoggerHook')
     ])
 
-work_dir = "/data/mmdet/ACM_MM_2021/cascade_rcnn_r101_fpn_eqlv2_20e+5e_coco_mm2021"
-resume_from = "/data/mmdet/ACM_MM_2021/cascade_rcnn_r101_fpn_eqlv2_20e_coco_mm2021/latest.pth"
+work_dir = "/data/mmdet/ACM_MM_2021/cascade_rcnn_r101_fpn_ms_eqlv2_25e+5e_coco_mm2021"
+resume_from = "/data/mmdet/ACM_MM_2021/cascade_rcnn_r101_fpn_eqlv2_20e_full_coco_mm2021/latest.pth"
