@@ -100,6 +100,6 @@ class advTransform:
             # 针对接口编程，只需要给攻击算法提供 图像、位置、标签和扰动值
             import ipdb
             ipdb.set_trace()
-            img = attack.fgsm.fgsm_attack(img, bboxes, labels, self.epsilon)
+            img = attack.fgsm.fgsm_attack(img, bboxes, labels, self.epsilon, results['train_model'])
             results['img'] = img
             return results
