@@ -1,3 +1,4 @@
+# TODO 这应该传个model和loss进来，第一阶段loss可以先不用考虑，只需要固定用eqlv2就行
 def fgsm_attack(img, bboxes, labels, epsilon):
     # data_grad 转 tensor
     import torch

@@ -68,8 +68,8 @@ class advTransform:
         # print(len(results['gt_labels']))
 
         # 返回原图
-        #import ipdb
-        #ipdb.set_trace()
+        import ipdb
+        ipdb.set_trace()
         if self.rand_ > self.pro2:
             return results
 

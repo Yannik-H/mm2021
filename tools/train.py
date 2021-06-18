@@ -162,6 +162,10 @@ def main():
     #print(model)
     model.init_weights()
 
+    import ipdb
+    ipdb.set_trace()
+    if cfg.data.train['pipeline'][0]['type'] == "LoadImageFromFileAndModel":
+        cfg.data.train['pipeline'][0]['train_model'] = model
     datasets = [build_dataset(cfg.data.train)]
     if len(cfg.workflow) == 2:
         val_dataset = copy.deepcopy(cfg.data.val)

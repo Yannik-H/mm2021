@@ -660,6 +660,7 @@ class Normalize(object):
             dict: Normalized results, 'img_norm_cfg' key is added into
                 result dict.
         """
+
         for key in results.get('img_fields', ['img']):
             results[key] = mmcv.imnormalize(results[key], self.mean, self.std,
                                             self.to_rgb)
